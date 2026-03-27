@@ -10,77 +10,148 @@ const generateNumerologyPDF = (userData, apiData) => {
             doc.on('end', () => resolve(Buffer.concat(chunks)));
             doc.on('error', (err) => reject(err));
 
-            // Title
-            doc.fillColor('#B08D57').fontSize(26).text('Complete Numerology Report', { align: 'center' });
-            doc.moveDown();
+            // 🎨 COLORS
+            const goldBg = '#F5E6C8';
+            const darkGold = '#B8963F';
+            const black = '#000000';
+            const gray = '#444444';
+            const cardBg = '#FFF8E7';
 
-            // User Details Section
-            doc.fillColor('#333333').fontSize(18).text('User Details', { underline: true });
-            doc.fontSize(12).text(`Full Name: ${userData.fullName}`);
-            doc.text(`Email: ${userData.email}`);
-            doc.text(`Date of Birth: ${userData.dob}`);
-            doc.text(`Gender: ${userData.gender || 'N/A'}`);
-            doc.text(`Location: ${userData.location || 'N/A'}`);
-            doc.moveDown();
+            // 🪄 FUNCTION: PAGE BORDER
+            const drawBorder = () => {
+                doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40)
+                    .strokeColor(darkGold)
+                    .lineWidth(1)
+                    .stroke();
+            };
 
-            // Numerology Insights Section
-            doc.fillColor('#333333').fontSize(18).text('Numerology Insights', { underline: true });
-            doc.moveDown(0.5);
+            // =========================
+            // 📜 COVER PAGE
+            // =========================
+            doc.rect(0, 0, doc.page.width, doc.page.height).fill(goldBg);
+            drawBorder();
 
-            // Dynamically render insights from API data
-            if (apiData && typeof apiData === 'object' && Object.keys(apiData).length > 0) {
-                Object.entries(apiData).forEach(([key, value]) => {
-                    // Skip entries with errors or empty data
+            doc.moveDown(5);
+
+            doc.fillColor(darkGold)
+                .fontSize(32)
+                .text('MAHAKAL', { align: 'center' });
+
+            doc.moveDown(1);
+
+            doc.fontSize(18)
+                .fillColor(gray)
+                .text('Numerology Report', { align: 'center' });
+
+            doc.moveDown(3);
+
+            // 👤 BIG NAME
+            doc.fillColor(black)
+                .fontSize(24)
+                .text(userData.fullName.toUpperCase(), { align: 'center' });
+
+            doc.moveDown(1);
+
+            doc.fontSize(14)
+                .fillColor(gray)
+                .text(`Date of Birth: ${userData.dob}`, { align: 'center' });
+
+            doc.moveDown(6);
+
+            doc.fontSize(10)
+                .fillColor(gray)
+                .text('Confidential & Personalized Report', { align: 'center' });
+
+            // ➕ ADD NEW PAGE
+            doc.addPage();
+
+            // =========================
+            // 📄 MAIN PAGE START
+            // =========================
+            doc.rect(0, 0, doc.page.width, doc.page.height).fill(goldBg);
+            drawBorder();
+
+            doc.fillColor(darkGold)
+                .fontSize(20)
+                .text('Numerology Insights', { align: 'center' });
+
+            doc.moveDown(2);
+
+            // =========================
+            // 🔮 INSIGHTS WITH CARDS
+            // =========================
+            if (apiData && typeof apiData === 'object') {
+                Object.entries(apiData).forEach(([key, value], index) => {
                     if (!value || value.error) return;
 
-                    const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    doc.fillColor('#B08D57').fontSize(14).text(formattedKey);
-                    
-                    if (typeof value === 'object' && value !== null) {
-                        // Attempt to display name/description if present, otherwise stringify
-                        if (value.name || value.description || value.text || value.detailed_meaning) {
-                            if (value.name) doc.fillColor('#444444').fontSize(12).text(`Result: ${value.name}`);
-                            const mainText = value.detailed_meaning || value.description || value.text;
-                            if (mainText) {
-                                doc.fillColor('#666666').fontSize(10).text(mainText, { align: 'justify' });
-                            }
-                            
-                            // Handle summary object if it exists (Dakidarts often has this)
-                            if (value.summary && typeof value.summary === 'object') {
-                                if (value.summary.overview) {
-                                    doc.fillColor('#444444').fontSize(11).text('Overview', { underline: true });
-                                    doc.fillColor('#666666').fontSize(10).text(value.summary.overview);
-                                }
-                                if (value.summary.strengths && Array.isArray(value.summary.strengths)) {
-                                    doc.fillColor('#444444').fontSize(11).text('Strengths:');
-                                    value.summary.strengths.forEach(s => doc.fillColor('#666666').fontSize(9).text(`• ${s}`));
-                                }
-                            }
-                        } else {
-                            doc.fillColor('#666666').fontSize(10).text(JSON.stringify(value, null, 2));
-                        }
-                    } else {
-                        doc.fillColor('#666666').fontSize(11).text(String(value));
+                    const title = key.replace(/_/g, ' ')
+                        .replace(/\b\w/g, l => l.toUpperCase());
+
+                    // 🌓 ALTERNATING CARD BG
+                    const isAlt = index % 2 === 0;
+                    const bgColor = isAlt ? cardBg : '#FFFFFF';
+
+                    const startY = doc.y;
+
+                    // Card Box
+                    doc.roundedRect(50, startY, doc.page.width - 100, 100, 8)
+                        .fill(bgColor);
+
+                    doc.fillColor(darkGold)
+                        .fontSize(13)
+                        .text(title, 60, startY + 10);
+
+                    let contentY = startY + 30;
+
+                    doc.fillColor(black)
+                        .fontSize(10);
+
+                    if (value.name) {
+                        doc.text(`Result: ${value.name}`, 60, contentY);
+                        contentY += 15;
                     }
-                    doc.moveDown(1.5);
+
+                    const text =
+                        value.detailed_meaning ||
+                        value.description ||
+                        value.text;
+
+                    if (text) {
+                        doc.fillColor(gray)
+                            .text(text, 60, contentY, {
+                                width: doc.page.width - 120
+                            });
+                    }
+
+                    doc.moveDown(6);
                 });
-            } else {
-                doc.fillColor('#666666').fontSize(11).text('No detailed insights available at this moment.');
             }
 
-            // Footer - Apply to all buffered pages
+            // =========================
+            // 📄 FOOTER + PAGE NUMBERS
+            // =========================
             const range = doc.bufferedPageRange();
+
             for (let i = range.start; i < range.start + range.count; i++) {
                 doc.switchToPage(i);
-                doc.fontSize(10).text(
-                    `Generated by Numerology Project - Page ${i + 1}`,
-                    50,
-                    doc.page.height - 50,
-                    { align: 'center', width: doc.page.width - 100 }
-                );
+
+                drawBorder();
+
+                doc.fillColor(gray)
+                    .fontSize(9)
+                    .text(
+                        `Mahakal Report • Page ${i + 1}`,
+                        50,
+                        doc.page.height - 40,
+                        {
+                            align: 'center',
+                            width: doc.page.width - 100
+                        }
+                    );
             }
 
             doc.end();
+
         } catch (error) {
             reject(error);
         }
