@@ -50,6 +50,7 @@ const SubscriberSchema = new mongoose.Schema({
 const Subscriber = mongoose.model('Subscriber', SubscriberSchema);
 
 // --- 4. Routes ---
+const reportRoutes = require('./src/routes/reportRoutes');
 
 // Health Check
 app.get('/', (req, res) => {
@@ -68,17 +69,10 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // Route for Reports Form
-app.post('/api/reports', async (req, res) => {
-    try {
-        const newReport = new Report(req.body);
-        const savedData = await newReport.save();
-        res.status(201).json({ success: true, message: 'Report saved successfully!', data: savedData });
-    } catch (error) {
-        res.status(400).json({ success: false, message: 'Error saving report', error: error.message });
-    }
-});
+app.use('/api/reports', reportRoutes);
 
 // NEW: Route for Newsletter Subscription
+
 app.post('/api/subscribe', async (req, res) => {
     try {
         const { email } = req.body;
