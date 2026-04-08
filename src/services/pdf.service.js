@@ -1,10 +1,15 @@
 const PDFDocument = require('pdfkit');
 
+/**
+ * Generates a Premium Vedic Numerology PDF
+ * @param {Object} userData - Contains name and dob
+ * @param {Object} apiData - Contains numerology calculations and the 3x3 grid array
+ */
 const generateNumerologyPDF = (userData, apiData) => {
     return new Promise((resolve, reject) => {
         try {
             const doc = new PDFDocument({ 
-                margin: 50, 
+                margin: 40, 
                 bufferPages: true,
                 size: 'A4'
             });
@@ -14,142 +19,136 @@ const generateNumerologyPDF = (userData, apiData) => {
             doc.on('end', () => resolve(Buffer.concat(chunks)));
             doc.on('error', (err) => reject(err));
 
-            // 🎨 PROFESSIONAL COLOR PALETTE
             const colors = {
-                goldBg: '#FDF8EE',     // Softer cream
-                darkGold: '#8E6E27',   // Deeper, more "expensive" gold
+                goldBg: '#FDF8EE', // Light cream/parchment
+                darkGold: '#8E6E27',
                 accentGold: '#B8963F',
                 richBlack: '#1A1A1A',
                 mutedGray: '#555555',
                 cardWhite: '#FFFFFF'
             };
 
-            const drawBorder = () => {
-                // Outer Thick Border
-                doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40)
-                    .lineWidth(2)
-                    .strokeColor(colors.accentGold)
-                    .stroke();
-                // Inner Thin Decorative Line
-                doc.rect(25, 25, doc.page.width - 50, doc.page.height - 50)
-                    .lineWidth(0.5)
-                    .strokeColor(colors.accentGold)
-                    .stroke();
+            // Shared UI Decoration Function
+            const applyDecorations = () => {
+                const { width, height } = doc.page;
+                doc.save();
+                // Double Border
+                doc.rect(20, 20, width - 40, height - 40).lineWidth(2).strokeColor(colors.darkGold).stroke();
+                doc.rect(25, 25, width - 50, height - 50).lineWidth(0.5).strokeColor(colors.accentGold).stroke();
+                
+                // Corner Accents (Decorative dots)
+                const corners = [[30, 30], [width-30, 30], [30, height-30], [width-30, height-30]];
+                corners.forEach(([x, y]) => {
+                    doc.circle(x, y, 2).fill(colors.darkGold);
+                });
+                doc.restore();
             };
 
-            // =========================
-            // 📜 PREMIUM COVER PAGE
-            // =========================
+            // ==========================================
+            // PAGE 1: COVER & LO SHU GRID
+            // ==========================================
             doc.rect(0, 0, doc.page.width, doc.page.height).fill(colors.goldBg);
-            drawBorder();
+            applyDecorations();
 
-            doc.moveDown(6);
-            doc.fillColor(colors.darkGold)
-                .fontSize(40)
-                .text('MAHAKAL', { align: 'center', characterSpacing: 2 });
-            
-            doc.fontSize(14)
-                .fillColor(colors.mutedGray)
-                .text('ANCIENT NUMEROLOGY INSIGHTS', { align: 'center', characterSpacing: 1 });
+            doc.moveDown(3);
+            doc.fillColor(colors.darkGold).fontSize(30).text('MAHAKAL', { align: 'center', characterSpacing: 8 });
+            doc.fontSize(10).fillColor(colors.mutedGray).text('ANCIENT VEDIC NUMEROLOGY REPORT', { align: 'center' });
 
-            // Decorative Center Element
+            doc.moveDown(4);
+            doc.fillColor(colors.richBlack).fontSize(24).text(userData.fullName?.toUpperCase() || "SURAJ SINGH", { align: 'center' });
+            doc.fontSize(12).fillColor(colors.darkGold).text(`BORN ON: ${userData.dob || "01-01-2000"}`, { align: 'center' });
+
+            // Render the Lo Shu Grid (The 3x3 Square)
+            doc.moveDown(3);
             const centerX = doc.page.width / 2;
-            doc.moveTo(centerX - 50, doc.y + 20).lineTo(centerX + 50, doc.y + 20).strokeColor(colors.accentGold).stroke();
+            const gridSize = 50; // size of each cell
+            const startX = centerX - (gridSize * 1.5);
+            const startY = doc.y;
 
-            doc.moveDown(5);
-            doc.fillColor(colors.richBlack)
-                .fontSize(28)
-                .text(userData.fullName.toUpperCase(), { align: 'center' });
-
-            doc.moveDown(0.5);
-            doc.fontSize(16)
-                .fillColor(colors.accentGold)
-                .text(`DOB: ${userData.dob}`, { align: 'center' });
-
-            // =========================
-            // 📄 INSIGHTS PAGE
-            // =========================
-            doc.addPage();
-            doc.rect(0, 0, doc.page.width, doc.page.height).fill(colors.goldBg);
-            
-            doc.fillColor(colors.darkGold)
-                .fontSize(22)
-                .text('Personal Analysis', 50, 60);
-            
+            doc.fontSize(12).text("THE SACRED ALIGNMENT", { align: 'center' });
             doc.moveDown(1);
 
-            if (apiData && typeof apiData === 'object') {
-                Object.entries(apiData).forEach(([key, value]) => {
-                    if (!value || value.error) return;
+            // Lo Shu Grid Rendering Logic
+            // apiData.grid is expected to be an array of 9 numbers
+            const gridValues = apiData.grid || [4, 9, 2, 3, 5, 7, 8, 1, 6]; 
+            
+            gridValues.forEach((num, index) => {
+                const row = Math.floor(index / 3);
+                const col = index % 3;
+                const x = startX + (col * gridSize);
+                const y = startY + 30 + (row * gridSize);
 
-                    const title = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    const text = value.detailed_meaning || value.description || value.text || "";
-
-                    // Calculate height needed for text to avoid overlap
-                    const textHeight = doc.heightOfString(text, { width: doc.page.width - 140 });
-                    const cardHeight = textHeight + 60;
-
-                    // 🚦 PAGE BREAK CHECK
-                    if (doc.y + cardHeight > doc.page.height - 70) {
-                        doc.addPage();
-                        doc.rect(0, 0, doc.page.width, doc.page.height).fill(colors.goldBg);
-                        drawBorder();
-                    }
-
-                    const currentY = doc.y;
-
-                    // Draw Card Shadow/Outline
-                    doc.roundedRect(50, currentY, doc.page.width - 100, cardHeight, 5)
-                        .fill(colors.cardWhite)
-                        .lineWidth(0.5)
-                        .strokeColor('#E0E0E0')
-                        .stroke();
-
-                    // Gold Vertical Accent Line
-                    doc.rect(50, currentY, 4, cardHeight).fill(colors.darkGold);
-
-                    // Title
-                    doc.fillColor(colors.darkGold)
-                        .fontSize(13)
-                        .text(title, 70, currentY + 15, { underline: true });
-
-                    // Result Value (if exists)
-                    if (value.name) {
-                        doc.fillColor(colors.richBlack)
-                            .fontSize(11)
-                            .text(`Value: ${value.name}`, 70, currentY + 35, { oblique: true });
-                    }
-
-                    // Meaning Text
-                    doc.fillColor(colors.mutedGray)
-                        .fontSize(10)
-                        .text(text, 70, currentY + (value.name ? 55 : 35), {
-                            width: doc.page.width - 140,
-                            align: 'justify',
-                            lineGap: 2
-                        });
-
-                    doc.moveDown(2.5); // Space between cards
-                });
-            }
-
-            // =========================
-            // 📄 FOOTER LOGIC
-            // =========================
-            const range = doc.bufferedPageRange();
-            for (let i = range.start; i < range.start + range.count; i++) {
-                doc.switchToPage(i);
-                drawBorder();
+                // Draw Cell
+                doc.rect(x, y, gridSize, gridSize).lineWidth(1).strokeColor(colors.accentGold).stroke();
                 
-                doc.fontSize(8)
-                    .fillColor(colors.accentGold)
-                    .text(`© MAHAKAL NUMEROLOGY - CONFIDENTIAL REPORT`, 50, doc.page.height - 35, { align: 'left' });
-                
-                doc.text(`Page ${i + 1} of ${range.count}`, 50, doc.page.height - 35, { align: 'right' });
-            }
+                // Draw Number
+                if (num) {
+                    doc.fillColor(colors.richBlack)
+                       .fontSize(18)
+                       .text(num.toString(), x, y + 15, { width: gridSize, align: 'center' });
+                }
+            });
+
+            // ==========================================
+            // PAGE 2-3: CHARACTERISTICS
+            // ==========================================
+            doc.addPage();
+            doc.rect(0, 0, doc.page.width, doc.page.height).fill(colors.goldBg);
+            applyDecorations();
+
+            doc.fillColor(colors.darkGold).fontSize(18).text("I. CORE CHARACTERISTICS", 50, 60);
+            doc.moveDown(2);
+
+            const analysisEntries = Object.entries(apiData).filter(([k, v]) => v && typeof v === 'object' && v.name);
+
+            analysisEntries.forEach(([key, value]) => {
+                const title = key.replace(/_/g, ' ').toUpperCase();
+                const description = value.detailed_meaning || value.description || "Information not available.";
+
+                // Smart Page Break
+                if (doc.y > 700) {
+                    doc.addPage();
+                    doc.rect(0, 0, doc.page.width, doc.page.height).fill(colors.goldBg);
+                    applyDecorations();
+                    doc.y = 70;
+                }
+
+                doc.fillColor(colors.darkGold).fontSize(11).text(`${title}: ${value.name}`, { bold: true });
+                doc.moveDown(0.5);
+                doc.fillColor(colors.mutedGray).fontSize(10).text(description, { align: 'justify', lineGap: 2 });
+                doc.moveDown(2);
+            });
+
+            // ==========================================
+            // PAGE 4: REMEDIES & FOOTER
+            // ==========================================
+            doc.addPage();
+            doc.rect(0, 0, doc.page.width, doc.page.height).fill(colors.goldBg);
+            applyDecorations();
+
+            doc.y = 70;
+            doc.fillColor(colors.darkGold).fontSize(18).text("II. SACRED REMEDIES", 50, doc.y);
+            doc.moveDown(2);
+
+            const remedies = [
+                { t: "LUCKY COLORS", d: "Shades of gold, cream, and deep yellow to enhance your aura." },
+                { t: "FAVORABLE DAYS", d: "Sundays and Thursdays are your power windows for new beginnings." },
+                { t: "GEMSTONE VIBRATION", d: "Consider Yellow Sapphire or Citrine to align with your core frequency." }
+            ];
+
+            remedies.forEach(r => {
+                doc.fillColor(colors.richBlack).fontSize(11).text(r.t, { underline: true });
+                doc.fillColor(colors.mutedGray).fontSize(10).text(r.d);
+                doc.moveDown(1.5);
+            });
+
+            // Final Footer Signature
+            doc.moveDown(4);
+            const footerY = doc.y;
+            doc.rect(50, footerY, doc.page.width - 100, 40).fill(colors.darkGold);
+            doc.fillColor(colors.cardWhite).fontSize(10).text("MAY THE NUMBERS GUIDE YOUR PATH", 50, footerY + 15, { align: 'center' });
 
             doc.end();
-
         } catch (error) {
             reject(error);
         }
