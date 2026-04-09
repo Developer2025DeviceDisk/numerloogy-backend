@@ -30,12 +30,21 @@ const PricingSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+   offerId: {
+  type: String,
+  unique: true,
+}
+
   },
   { timestamps: true }
 );
 
+
 // ✅ NO next() USED — CLEAN VERSION
 PricingSchema.pre("save", function () {
+ this.offerId = `offer_${Date.now()}`;
+
+
   this.finalPrice =
     this.price - (this.price * this.discount) / 100;
 });

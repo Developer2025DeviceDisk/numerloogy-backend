@@ -23,25 +23,32 @@ exports.createOrUpdatePricing = async (req, res, next) => {
   try {
     const { price, discount, buttonText, offerText, countdown } = req.body;
 
-    const updatedPricing = await Pricing.findOneAndUpdate(
-      {}, // ✅ no filter → always single document
-      {
+    let pricing = await Pricing.findOne();
+
+    if (pricing) {
+      // ✅ UPDATE → triggers new offerId
+      pricing.price = price;
+      pricing.discount = discount;
+      pricing.buttonText = buttonText;
+      pricing.offerText = offerText;
+      pricing.countdown = countdown;
+
+      await pricing.save(); // 🔥 THIS triggers new offerId
+    } else {
+      // ✅ CREATE
+      pricing = await Pricing.create({
         price,
         discount,
         buttonText,
         offerText,
         countdown,
-      },
-      {
-        new: true,   // ✅ return updated document
-        upsert: true // ✅ create if not exists
-      }
-    );
+      });
+    }
 
     res.status(200).json({
       success: true,
       message: "Pricing updated successfully",
-      data: updatedPricing,
+      data: pricing,
     });
 
   } catch (error) {
