@@ -10,7 +10,7 @@ const Report = mongoose.models.Report || mongoose.model('Report', new mongoose.S
     phone: String,
     dob: String,
     gender: String,
-    location: String,
+    birthPlace: String,
     createdAt: { type: Date, default: Date.now }
 }));
 

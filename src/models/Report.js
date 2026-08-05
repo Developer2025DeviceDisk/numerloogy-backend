@@ -6,7 +6,7 @@ const ReportSchema = new mongoose.Schema({
   phone: String,
   dob: String,
   gender: String,
-  location: String,
+  birthPlace: String,
   createdAt: { type: Date, default: Date.now }
 });
 

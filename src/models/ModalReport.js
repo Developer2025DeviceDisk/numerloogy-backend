@@ -5,6 +5,7 @@ const ModalSchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   dob: String,
+  birthPlace: String,
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -2,7 +2,7 @@ const ModalReport = require("../models/ModalReport");
 
 exports.createModal = async (req, res) => {
   try {
-    const { fullName, email, phone, dob } = req.body;
+    const { fullName, email, phone, dob, birthPlace } = req.body;
 
     if (!email || !phone) {
       return res.status(400).json({
@@ -11,7 +11,7 @@ exports.createModal = async (req, res) => {
       });
     }
 
-    const newModal = new ModalReport({ fullName, email, phone, dob });
+    const newModal = new ModalReport({ fullName, email, phone, dob, birthPlace });
     await newModal.save();
 
     res.status(201).json({
