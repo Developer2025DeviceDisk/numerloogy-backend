@@ -1475,7 +1475,7 @@ const generateNumerologyPDF = (
                 userCardHeight
             );
 
-            setHeading(11);
+            setHeading(16);
 
             doc.text(
                 "NAME",
@@ -1498,7 +1498,7 @@ const generateNumerologyPDF = (
                 }
             );
 
-            setHeading(11);
+            setHeading(16);
 
             doc.text(
                 "DATE OF BIRTH",
@@ -2035,8 +2035,8 @@ const generateNumerologyPDF = (
 
                 doc.text(
                     title,
-                    PAGE.left + 25,
-                    y + 20,
+                    PAGE.left + 35,
+                    y + 30,
                     {
                         width:
                             CONTENT_WIDTH -
@@ -2052,7 +2052,7 @@ const generateNumerologyPDF = (
                         : String(
                               number
                           ),
-                    PAGE.left + 25,
+                    PAGE.left + 35,
                     y + 42,
                     {
                         width:
@@ -2064,7 +2064,7 @@ const generateNumerologyPDF = (
 
                 doc
                     .moveTo(
-                        PAGE.left + 25,
+                        PAGE.left + 35,
                         y + 80
                     )
                     .lineTo(
@@ -2086,7 +2086,7 @@ const generateNumerologyPDF = (
 
                 doc.text(
                     description,
-                    PAGE.left + 25,
+                    PAGE.left + 35,
                     y + 95,
                     {
                         width:
@@ -2094,7 +2094,7 @@ const generateNumerologyPDF = (
                             50,
                         height:
                             maxTextHeight,
-                        lineGap: 3,
+                        lineGap: 6,
                     }
                 );
 
@@ -2173,7 +2173,7 @@ const generateNumerologyPDF = (
 
             doc.text(
                 "YOUR NUMBER PATTERN",
-                PAGE.left + 25,
+                PAGE.left + 35,
                 doc.y + 22
             );
 
@@ -2187,7 +2187,7 @@ const generateNumerologyPDF = (
                           )
                         : "None"
                 }`,
-                PAGE.left + 25,
+                PAGE.left + 35,
                 doc.y + 50,
                 {
                     width:
@@ -2204,7 +2204,7 @@ const generateNumerologyPDF = (
                           )
                         : "None"
                 }`,
-                PAGE.left + 25,
+                PAGE.left + 35,
                 doc.y + 75,
                 {
                     width:
@@ -2229,7 +2229,7 @@ const generateNumerologyPDF = (
                         .join(", ") ||
                     "None"
                 }`,
-                PAGE.left + 25,
+                PAGE.left + 35,
                 doc.y + 100,
                 {
                     width:
@@ -2317,12 +2317,12 @@ const generateNumerologyPDF = (
                     h
                 );
 
-                setHeading(11);
+                setHeading(16);
 
                 doc.text(
                     `${number} — ${meaning.title}`,
-                    PAGE.left + 25,
-                    y + 20
+                    PAGE.left + 35,
+                    y + 30
                 );
 
                 setSmallMuted();
@@ -2339,7 +2339,7 @@ const generateNumerologyPDF = (
                                   : ""
                           }`
                         : "Not present in birth-date grid",
-                    PAGE.left + 25,
+                    PAGE.left + 35,
                     y + 42
                 );
 
@@ -2347,7 +2347,7 @@ const generateNumerologyPDF = (
 
                 doc.text(
                     text,
-                    PAGE.left + 25,
+                    PAGE.left + 35,
                     y + 65,
                     {
                         width:
@@ -2355,7 +2355,7 @@ const generateNumerologyPDF = (
                             50,
                         height:
                             h - 85,
-                        lineGap: 3,
+                        lineGap: 6,
                     }
                 );
 
@@ -2429,8 +2429,8 @@ const generateNumerologyPDF = (
                 (text, index) => {
                     const h =
                         Math.max(
-                            105,
-                            75 +
+                            130,
+                            90 +
                                 getTextHeight(
                                     text,
                                     CONTENT_WIDTH -
@@ -2459,21 +2459,21 @@ const generateNumerologyPDF = (
                         h
                     );
 
-                    setHeading(11);
+                    setHeading(16);
 
                     doc.text(
                         `STRENGTH ${
                             index + 1
                         }`,
-                        PAGE.left + 25,
+                        PAGE.left + 35,
                         strengthsY + 18
                     );
 
-                    setMuted(10);
+                    setMuted(13.5);
 
                     doc.text(
                         text,
-                        PAGE.left + 25,
+                        PAGE.left + 35,
                         strengthsY + 45,
                         {
                             width:
@@ -2481,7 +2481,7 @@ const generateNumerologyPDF = (
                                 50,
                             height:
                                 h - 60,
-                            lineGap: 3,
+                            lineGap: 6,
                         }
                     );
 
@@ -2584,19 +2584,19 @@ const generateNumerologyPDF = (
                         h
                     );
 
-                    setHeading(11);
+                    setHeading(16);
 
                     doc.text(
                         item.title,
-                        PAGE.left + 25,
-                        y + 20
+                        PAGE.left + 35,
+                        y + 30
                     );
 
-                    setMuted(10);
+                    setMuted(13.5);
 
                     doc.text(
                         item.text,
-                        PAGE.left + 25,
+                        PAGE.left + 35,
                         y + 50,
                         {
                             width:
@@ -2604,7 +2604,7 @@ const generateNumerologyPDF = (
                                 50,
                             height:
                                 h - 70,
-                            lineGap: 3,
+                            lineGap: 6,
                         }
                     );
 
@@ -2706,19 +2706,19 @@ const generateNumerologyPDF = (
                         h
                     );
 
-                    setHeading(11);
+                    setHeading(16);
 
                     doc.text(
                         item.title,
-                        PAGE.left + 25,
-                        y + 20
+                        PAGE.left + 35,
+                        y + 30
                     );
 
-                    setMuted(10);
+                    setMuted(13.5);
 
                     doc.text(
                         item.text,
-                        PAGE.left + 25,
+                        PAGE.left + 35,
                         y + 50,
                         {
                             width:
@@ -2726,7 +2726,7 @@ const generateNumerologyPDF = (
                                 50,
                             height:
                                 h - 70,
-                            lineGap: 3,
+                            lineGap: 6,
                         }
                     );
 
@@ -2822,13 +2822,13 @@ const generateNumerologyPDF = (
                 190
             );
 
-            setHeading(12);
+            setHeading(16);
 
             doc.text(
                 `PERSONAL YEAR ${
                     currentYear
                 }`,
-                PAGE.left + 25,
+                PAGE.left + 35,
                 PAGE.contentTop + 25
             );
 
@@ -2840,22 +2840,22 @@ const generateNumerologyPDF = (
                           personalYear
                       )
                     : "N/A",
-                PAGE.left + 25,
+                PAGE.left + 35,
                 PAGE.contentTop + 52
             );
 
-            setMuted(10.5);
+            setMuted(13.5);
 
             doc.text(
                 cycleText,
-                PAGE.left + 25,
+                PAGE.left + 35,
                 PAGE.contentTop + 105,
                 {
                     width:
                         CONTENT_WIDTH -
                         50,
                     height: 65,
-                    lineGap: 3,
+                    lineGap: 6,
                 }
             );
 
@@ -2999,14 +2999,14 @@ const generateNumerologyPDF = (
                         h
                     );
 
-                    setHeading(11);
+                    setHeading(16);
 
                     doc.text(
                         String(
                             item.title
                         ).toUpperCase(),
-                        PAGE.left + 25,
-                        y + 20,
+                        PAGE.left + 35,
+                        y + 30,
                         {
                             width:
                                 CONTENT_WIDTH -
@@ -3016,7 +3016,7 @@ const generateNumerologyPDF = (
 
                     doc
                         .moveTo(
-                            PAGE.left + 25,
+                            PAGE.left + 35,
                             y + 43
                         )
                         .lineTo(
@@ -3033,15 +3033,15 @@ const generateNumerologyPDF = (
 
                     doc.text(
                         description,
-                        PAGE.left + 25,
-                        y + 57,
+                        PAGE.left + 35,
+                        y + 75,
                         {
                             width:
                                 CONTENT_WIDTH -
                                 50,
                             height:
                                 h - 75,
-                            lineGap: 3,
+                            lineGap: 6,
                         }
                     );
 
@@ -3112,8 +3112,8 @@ const generateNumerologyPDF = (
                                     item.text,
                                     CONTENT_WIDTH -
                                         50,
-                                    10.5,
-                                    3
+                                    13.5,
+                                    6
                                 )
                         );
 
@@ -3136,27 +3136,27 @@ const generateNumerologyPDF = (
                         h
                     );
 
-                    setHeading(11);
+                    setHeading(16);
 
                     doc.text(
                         item.title,
-                        PAGE.left + 25,
-                        y + 20
+                        PAGE.left + 35,
+                        y + 30
                     );
 
-                    setMuted(10.5);
+                    setMuted(13.5);
 
                     doc.text(
                         item.text,
-                        PAGE.left + 25,
-                        y + 55,
+                        PAGE.left + 35,
+                        y + 75,
                         {
                             width:
                                 CONTENT_WIDTH -
                                 50,
                             height:
                                 h - 75,
-                            lineGap: 3,
+                            lineGap: 6,
                         }
                     );
 
@@ -3179,52 +3179,62 @@ const generateNumerologyPDF = (
             }
 
             const closingY =
-                doc.y + 10;
+                
+   doc.y + 15;
 
-            drawCard(
-                PAGE.left,
-                closingY,
-                CONTENT_WIDTH,
-                105
-            );
+const cardHeight = 180;
 
-            setHeading(15);
+drawCard(
+    PAGE.left,
+    closingY,
+    CONTENT_WIDTH,
+    cardHeight
+);
 
-            doc.text(
-                "May Divine Wisdom Guide Your Journey",
-                0,
-                closingY + 20,
-                {
-                    width:
-                        PAGE.width,
-                    align: "center",
-                }
-            );
+// Title
+setHeading(18);
 
-            setMuted(9.5);
+doc.text(
+    "May Divine Wisdom Guide Your Journey",
+    PAGE.left,
+    closingY + 25,
+    {
+        width: CONTENT_WIDTH,
+        align: "center",
+    }
+);
 
-            doc.text(
-                "Prepared according to the principles of Ancient Vedic Numerology for guidance, self-awareness and spiritual reflection.",
-                PAGE.left + 30,
-                closingY + 52,
-                {
-                    width:
-                        CONTENT_WIDTH - 60,
-                    align: "center",
-                    lineGap: 3,
-                }
-            );
+// Move cursor automatically
+doc.y += 15;
 
-            setHeading(10);
+// Body
+setMuted(13);
 
-            doc.text(
-                "ACTROVASTUCONNECT • ANCIENT VEDIC NUMEROLOGY",
-                0,
-                closingY + 82,
-                {
-                    width:
-                        PAGE.width,
-                    align: "center",
+doc.text(
+    "Prepared according to the principles of Ancient Vedic Numerology for guidance, self-awareness and spiritual reflection.",
+    PAGE.left + 40,
+    doc.y,
+    {
+        width: CONTENT_WIDTH - 80,
+        align: "center",
+        lineGap: 5,
+    }
+);
+
+// Move below the paragraph
+doc.y += 20;
+
+// Footer
+setHeading(14);
+
+doc.text(
+    "ASTROVASTUCONNECT • ANCIENT VEDIC NUMEROLOGY",
+    PAGE.left,
+    doc.y,
+    {
+        width: CONTENT_WIDTH,
+        align: "center",
+    
                     characterSpacing: 1,
                 }
             );
