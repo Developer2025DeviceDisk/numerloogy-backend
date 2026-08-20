@@ -2,31 +2,6 @@ const PDFDocument = require("pdfkit");
 const path = require("path");
 const fs = require("fs");
 
-/**
- * ============================================================
- * PREMIUM VEDIC NUMEROLOGY PDF
- * ============================================================
- *
- * Replacement for the previous PDF generator.
- *
- * Main fixes:
- * 1. Prevents accidental blank pages.
- * 2. Prevents text from automatically overflowing into pages.
- * 3. Splits long content safely.
- * 4. Removes hard-coded customer fallback data.
- * 5. Uses API data when available.
- * 6. Calculates Lo Shu Grid from DOB when API grid is missing.
- * 7. Adds structured report sections.
- * 8. Adds page numbers only after all pages are complete.
- *
- * Usage:
- *
- * generateNumerologyPDF(userData, apiData)
- *
- * Returns:
- * Promise<Buffer>
- */
-
 const generateNumerologyPDF = (
     userData = {},
     apiData = {}
